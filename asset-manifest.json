@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/user-tribble/static/css/main.d35c95b8.css",
+    "main.js": "/user-tribble/static/js/main.1a77b1d0.js",
+    "static/js/453.93b1be42.chunk.js": "/user-tribble/static/js/453.93b1be42.chunk.js",
+    "index.html": "/user-tribble/index.html",
+    "main.d35c95b8.css.map": "/user-tribble/static/css/main.d35c95b8.css.map",
+    "main.1a77b1d0.js.map": "/user-tribble/static/js/main.1a77b1d0.js.map",
+    "453.93b1be42.chunk.js.map": "/user-tribble/static/js/453.93b1be42.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.d35c95b8.css",
+    "static/js/main.1a77b1d0.js"
+  ]
+}
