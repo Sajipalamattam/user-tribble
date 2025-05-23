@@ -1,0 +1,266 @@
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { useEmployees } from './EmployeeContext';
+
+export default function EmployeeDetails({ mode }) {
+  const { employeeEmail } = useParams();
+  const navigate = useNavigate();
+  const { employees, updateEmployee, addEmployee } = useEmployees();
+  const isAddMode = mode === 'add';
+  const [isEdit, setIsEdit] = useState(isAddMode); 
+
+  
+  const uniquePositions = Array.from(
+    new Set(employees.map(emp => emp["Employee position"]).filter(Boolean))
+  );
+
+ 
+  const employee = !isAddMode
+    ? employees.find(emp => emp.Email === decodeURIComponent(employeeEmail))
+    : null;
+
+  
+  const initialForm = isAddMode
+    ? {
+        "Full name": "",
+        "Employee position": "",
+        "Email": "",
+        "Phone number": "",
+        "Date of Birth": "",
+        "Age": "",
+        "Location": "",
+        "Gender": "",
+        "Nationality": ""
+      }
+    : employee
+    ? { ...employee }
+    : null;
+
+  const [editForm, setEditForm] = useState(initialForm);
+
+  useEffect(() => {
+    if (!isAddMode) {
+      setEditForm(employee ? { ...employee } : null);
+      setIsEdit(false); 
+    } else {
+      setEditForm(initialForm);
+      setIsEdit(true); 
+    }
+    
+  }, [employeeEmail, employee, isAddMode]);
+
+  if (!isAddMode && !employee) {
+    return <div>Employee not found.</div>;
+  }
+
+  const fields = [
+    { label: 'Full Name', key: 'Full name' },
+    { label: 'Position', key: 'Employee position' },
+    { label: 'Email', key: 'Email' },
+    { label: 'Phone Number', key: 'Phone number' },
+    { label: 'Date of Birth', key: 'Date of Birth' },
+    { label: 'Age', key: 'Age' },
+    { label: 'Location', key: 'Location' },
+    { label: 'Gender', key: 'Gender' },
+    { label: 'Nationality', key: 'Nationality' }
+  ];
+
+  const handleChange = (key, value) => {
+    setEditForm(prev => ({
+      ...prev,
+      [key]: value
+    }));
+  };
+
+  
+  const handleSave = () => {
+    if (isAddMode) {
+     
+      if (
+        !editForm["Full name"] ||
+        !editForm["Email"] ||
+        employees.some(emp => emp.Email === editForm["Email"])
+      ) {
+        alert("Please enter all required fields and ensure the email is unique.");
+        return;
+      }
+      addEmployee(editForm);
+      navigate('/employees');
+    } else {
+      updateEmployee(employee.Email, editForm);
+      setIsEdit(false);
+    }
+  };
+
+  const handleCancel = () => {
+    if (isAddMode) {
+      navigate('/employees');
+    } else {
+      setEditForm({ ...employee });
+      setIsEdit(false);
+    }
+  };
+
+  return (
+    <div style={{
+      minHeight: '100vh',
+      position: 'relative',
+      background: '#f6f8fa',
+      overflow: 'hidden'
+    }}>
+      {}
+      <img
+        src="/details-page.jpeg"
+        alt=""
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100vw',
+          height: '100vh',
+          objectFit: 'cover',
+          opacity: 0.15,
+          filter: 'blur(1px)',
+          zIndex: 0,
+          pointerEvents: 'none',
+          userSelect: 'none'
+        }}
+      />
+
+      <div style={{
+        maxWidth: 700,
+        margin: '40px auto',
+        padding: 32,
+        background: '#fff',
+        borderRadius: 12,
+        boxShadow: '0 4px 24px rgba(0,0,0,0.08)',
+        position: 'relative',
+        zIndex: 1
+      }}>
+        {}
+        <div style={{ display: 'flex', gap: 16, marginBottom: 24 }}>
+          {(isEdit || isAddMode) && (
+            <>
+              <button
+                type="button"
+                onClick={handleSave}
+                style={{
+                  padding: '8px 20px',
+                  borderRadius: 6,
+                  background: '#1976d2',
+                  color: '#fff',
+                  border: 'none',
+                  fontSize: 15,
+                  cursor: 'pointer'
+                }}
+              >
+                {isAddMode ? 'Add' : 'Update'}
+              </button>
+              <button
+                type="button"
+                onClick={handleCancel}
+                style={{
+                  padding: '8px 20px',
+                  borderRadius: 6,
+                  background: '#ccc',
+                  color: '#333',
+                  border: 'none',
+                  fontSize: 15,
+                  cursor: 'pointer'
+                }}
+              >
+                Cancel
+              </button>
+            </>
+          )}
+          {!isAddMode && !isEdit && (
+            <>
+              <button
+                type="button"
+                onClick={() => setIsEdit(true)}
+                style={{
+                  padding: '8px 20px',
+                  borderRadius: 6,
+                  background: '#ffa726',
+                  color: '#fff',
+                  border: 'none',
+                  fontSize: 15,
+                  cursor: 'pointer'
+                }}
+              >
+                Edit
+              </button>
+              <button
+                type="button"
+                onClick={() => navigate('/employees')}
+                style={{
+                  padding: '8px 20px',
+                  borderRadius: 6,
+                  background: '#1976d2',
+                  color: '#fff',
+                  border: 'none',
+                  fontSize: 15,
+                  cursor: 'pointer'
+                }}
+              >
+                Back to List
+              </button>
+            </>
+          )}
+        </div>
+
+        <h2 style={{ color: '#1976d2', marginBottom: 24 }}>
+          {isAddMode ? 'Add New Employee' : 'Employee Details'}
+        </h2>
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: '1fr 1fr',
+          rowGap: 20,
+          columnGap: 40
+        }}>
+          {fields.map((field, idx) => (
+            <div key={idx}>
+              <div style={{ fontWeight: 500, color: '#888' }}>{field.label}</div>
+              {field.key === 'Employee position' ? (
+                <select
+                  value={editForm[field.key] || ''}
+                  onChange={e => handleChange(field.key, e.target.value)}
+                  style={{
+                    fontSize: 17,
+                    padding: 6,
+                    borderRadius: 4,
+                    border: '1px solid #aaa',
+                    width: '95%'
+                  }}
+                  disabled={!isEdit && !isAddMode}
+                >
+                  <option value="">Select Position</option>
+                  {uniquePositions.map(pos => (
+                    <option key={pos} value={pos}>{pos}</option>
+                  ))}
+                </select>
+              ) : (
+                <input
+                  type="text"
+                  value={editForm[field.key] || ''}
+                  onChange={e => handleChange(field.key, e.target.value)}
+                  style={{
+                    fontSize: 17,
+                    padding: 6,
+                    borderRadius: 4,
+                    border: '1px solid #aaa',
+                    width: '90%'
+                  }}
+                  disabled={
+                    (!isEdit && !isAddMode) ||
+                    (!isAddMode && field.key === 'Email')
+                  }
+                />
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
