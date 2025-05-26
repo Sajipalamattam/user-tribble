@@ -1,1 +1,37 @@
+body, html {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
+/* Make the header and split screen responsive */
+@media (max-width: 900px) {
+  .split-screen {
+    flex-direction: column;
+    max-width: 98vw !important;
+    min-height: 0 !important;
+    margin: 60px auto 0 auto !important;
+  }
+  .left-side, .right-side {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100vw !important;
+    justify-content: center !important;
+  }
+  .login-card {
+    max-width: 98vw !important;
+    padding: 24px 8vw !important;
+  }
+}
+
+/* Make header more compact on small screens */
+@media (max-width: 600px) {
+  .header {
+    padding: 0 10px !important;
+    min-height: 36px !important;
+    font-size: 13px !important;
+  }
+  .logo {
+    font-size: 14px !important;
+  }
+}

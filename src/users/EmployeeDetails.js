@@ -7,19 +7,15 @@ export default function EmployeeDetails({ mode }) {
   const navigate = useNavigate();
   const { employees, updateEmployee, addEmployee } = useEmployees();
   const isAddMode = mode === 'add';
-  const [isEdit, setIsEdit] = useState(isAddMode); 
 
-  
   const uniquePositions = Array.from(
     new Set(employees.map(emp => emp["Employee position"]).filter(Boolean))
   );
 
- 
   const employee = !isAddMode
     ? employees.find(emp => emp.Email === decodeURIComponent(employeeEmail))
     : null;
 
-  
   const initialForm = isAddMode
     ? {
         "Full name": "",
@@ -37,20 +33,48 @@ export default function EmployeeDetails({ mode }) {
     : null;
 
   const [editForm, setEditForm] = useState(initialForm);
+  const [originalForm, setOriginalForm] = useState(initialForm);
 
   useEffect(() => {
     if (!isAddMode) {
       setEditForm(employee ? { ...employee } : null);
-      setIsEdit(false); 
+      setOriginalForm(employee ? { ...employee } : null);
     } else {
       setEditForm(initialForm);
-      setIsEdit(true); 
+      setOriginalForm(initialForm);
     }
-    
   }, [employeeEmail, employee, isAddMode]);
 
   if (!isAddMode && !employee) {
-    return <div>Employee not found.</div>;
+    return (
+      <div style={{
+        maxWidth: 700,
+        margin: '90px auto 0 auto',
+        padding: 32,
+        background: '#fff',
+        borderRadius: 12,
+        boxShadow: '0 4px 24px rgba(0,0,0,0.08)',
+        position: 'relative',
+        zIndex: 1
+      }}>
+        <h2 style={{ color: '#1976d2', marginBottom: 24 }}>Employee Not Found</h2>
+        <button
+          type="button"
+          onClick={() => navigate('/employees')}
+          style={{
+            padding: '8px 20px',
+            borderRadius: 6,
+            background: '#1976d2',
+            color: '#fff',
+            border: 'none',
+            fontSize: 15,
+            cursor: 'pointer'
+          }}
+        >
+          Back to List
+        </button>
+      </div>
+    );
   }
 
   const fields = [
@@ -72,10 +96,11 @@ export default function EmployeeDetails({ mode }) {
     }));
   };
 
-  
+  // Check if any field is modified
+  const isModified = JSON.stringify(editForm) !== JSON.stringify(originalForm);
+
   const handleSave = () => {
     if (isAddMode) {
-     
       if (
         !editForm["Full name"] ||
         !editForm["Email"] ||
@@ -88,17 +113,12 @@ export default function EmployeeDetails({ mode }) {
       navigate('/employees');
     } else {
       updateEmployee(employee.Email, editForm);
-      setIsEdit(false);
+      setOriginalForm({ ...editForm });
     }
   };
 
   const handleCancel = () => {
-    if (isAddMode) {
-      navigate('/employees');
-    } else {
-      setEditForm({ ...employee });
-      setIsEdit(false);
-    }
+    navigate('/employees');
   };
 
   return (
@@ -108,7 +128,39 @@ export default function EmployeeDetails({ mode }) {
       background: '#f6f8fa',
       overflow: 'hidden'
     }}>
-      {}
+      {/* Responsive styles */}
+      <style>{`
+        @media (max-width: 900px) {
+          .details-card {
+            max-width: 98vw !important;
+            padding: 18px 2vw !important;
+            margin: 80px auto 0 auto !important;
+          }
+          .details-grid {
+            grid-template-columns: 1fr !important;
+            row-gap: 18px !important;
+            column-gap: 0 !important;
+          }
+          .details-title {
+            font-size: 20px !important;
+          }
+          .details-btn {
+            font-size: 13px !important;
+            padding: 7px 10px !important;
+          }
+        }
+        @media (max-width: 600px) {
+          .details-card {
+            max-width: 100vw !important;
+            padding: 8px 0 !important;
+            border-radius: 0 !important;
+            margin: 70px auto 0 auto !important;
+          }
+          .details-title {
+            font-size: 15px !important;
+          }
+        }
+      `}</style>
       <img
         src="/details-page.jpeg"
         alt=""
@@ -127,9 +179,9 @@ export default function EmployeeDetails({ mode }) {
         }}
       />
 
-      <div style={{
+      <div className="details-card" style={{
         maxWidth: 700,
-        margin: '40px auto',
+        margin: '90px auto 0 auto',
         padding: 32,
         background: '#fff',
         borderRadius: 12,
@@ -137,82 +189,46 @@ export default function EmployeeDetails({ mode }) {
         position: 'relative',
         zIndex: 1
       }}>
-        {}
-        <div style={{ display: 'flex', gap: 16, marginBottom: 24 }}>
-          {(isEdit || isAddMode) && (
-            <>
-              <button
-                type="button"
-                onClick={handleSave}
-                style={{
-                  padding: '8px 20px',
-                  borderRadius: 6,
-                  background: '#1976d2',
-                  color: '#fff',
-                  border: 'none',
-                  fontSize: 15,
-                  cursor: 'pointer'
-                }}
-              >
-                {isAddMode ? 'Add' : 'Update'}
-              </button>
-              <button
-                type="button"
-                onClick={handleCancel}
-                style={{
-                  padding: '8px 20px',
-                  borderRadius: 6,
-                  background: '#ccc',
-                  color: '#333',
-                  border: 'none',
-                  fontSize: 15,
-                  cursor: 'pointer'
-                }}
-              >
-                Cancel
-              </button>
-            </>
-          )}
-          {!isAddMode && !isEdit && (
-            <>
-              <button
-                type="button"
-                onClick={() => setIsEdit(true)}
-                style={{
-                  padding: '8px 20px',
-                  borderRadius: 6,
-                  background: '#ffa726',
-                  color: '#fff',
-                  border: 'none',
-                  fontSize: 15,
-                  cursor: 'pointer'
-                }}
-              >
-                Edit
-              </button>
-              <button
-                type="button"
-                onClick={() => navigate('/employees')}
-                style={{
-                  padding: '8px 20px',
-                  borderRadius: 6,
-                  background: '#1976d2',
-                  color: '#fff',
-                  border: 'none',
-                  fontSize: 15,
-                  cursor: 'pointer'
-                }}
-              >
-                Back to List
-              </button>
-            </>
-          )}
+        <div style={{ display: 'flex', gap: 16, marginBottom: 24, flexWrap: 'wrap' }}>
+          <button
+            type="button"
+            className="details-btn"
+            onClick={handleSave}
+            disabled={!isModified && !isAddMode}
+            style={{
+              padding: '8px 20px',
+              borderRadius: 6,
+              background: isModified || isAddMode ? '#1976d2' : '#e0e0e0',
+              color: isModified || isAddMode ? '#fff' : '#aaa',
+              border: 'none',
+              fontSize: 15,
+              cursor: isModified || isAddMode ? 'pointer' : 'not-allowed'
+            }}
+          >
+            {isAddMode ? 'Add' : 'Update'}
+          </button>
+          <button
+            type="button"
+            className="details-btn"
+            onClick={handleCancel}
+            style={{
+              padding: '8px 20px',
+              borderRadius: 6,
+              background: '#e53935',
+              color: '#fff',
+              border: 'none',
+              fontSize: 15,
+              cursor: 'pointer'
+            }}
+          >
+            Cancel
+          </button>
         </div>
 
-        <h2 style={{ color: '#1976d2', marginBottom: 24 }}>
+        <h2 className="details-title" style={{ color: '#1976d2', marginBottom: 24 }}>
           {isAddMode ? 'Add New Employee' : 'Employee Details'}
         </h2>
-        <div style={{
+        <div className="details-grid" style={{
           display: 'grid',
           gridTemplateColumns: '1fr 1fr',
           rowGap: 20,
@@ -232,7 +248,7 @@ export default function EmployeeDetails({ mode }) {
                     border: '1px solid #aaa',
                     width: '95%'
                   }}
-                  disabled={!isEdit && !isAddMode}
+                  disabled={field.key === 'Email'}
                 >
                   <option value="">Select Position</option>
                   {uniquePositions.map(pos => (
@@ -251,10 +267,7 @@ export default function EmployeeDetails({ mode }) {
                     border: '1px solid #aaa',
                     width: '90%'
                   }}
-                  disabled={
-                    (!isEdit && !isAddMode) ||
-                    (!isAddMode && field.key === 'Email')
-                  }
+                  disabled={!isAddMode && field.key === 'Email'}
                 />
               )}
             </div>
