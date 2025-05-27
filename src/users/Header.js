@@ -1,9 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 
-// Simple profile icon SVG
+// Simple profile icon SVG (scaled up)
 const ProfileIcon = () => (
-  <svg height="28" width="28" viewBox="0 0 24 24" fill="none">
+  <svg height="32" width="32" viewBox="0 0 24 24" fill="none">
     <circle cx="12" cy="8" r="4" fill="#fff" />
     <ellipse cx="12" cy="17" rx="7" ry="4" fill="#fff" />
     <circle cx="12" cy="8" r="4" stroke="#1976d2" strokeWidth="2" />
@@ -11,12 +11,15 @@ const ProfileIcon = () => (
   </svg>
 );
 
-// Simple bell SVG for notifications
+// Simple bell SVG (scaled up)
 const BellIcon = () => (
-  <svg width="26" height="26" fill="none" viewBox="0 0 24 24">
+  <svg width="30" height="30" fill="none" viewBox="0 0 24 24">
     <path d="M12 22a2 2 0 0 0 2-2H10a2 2 0 0 0 2 2zm6-6V11a6 6 0 1 0-12 0v5l-1.7 1.7a1 1 0 0 0 .7 1.7h14a1 1 0 0 0 .7-1.7L18 16z" fill="#1976d2"/>
   </svg>
 );
+
+const HEADER_HEIGHT = 53;
+const MASTER_NAV_HEIGHT = HEADER_HEIGHT / 2;
 
 const headerStyle = {
   width: "100%",
@@ -30,16 +33,51 @@ const headerStyle = {
   left: 0,
   zIndex: 100,
   boxShadow: "0 2px 16px rgba(25, 118, 210, 0.12)",
-  minHeight: 48,
-  borderBottomLeftRadius: 18,
-  borderBottomRightRadius: 18,
+  minHeight: HEADER_HEIGHT,
+  //borderBottomLeftRadius: 18,
+  //borderBottomRightRadius: 18,
   backdropFilter: "blur(6px)",
   boxSizing: "border-box"
 };
 
+const masterNavStyle = {
+  width: "100%",
+  background: "linear-gradient(90deg, #90caf9 60%, #bbdefb 100%)", // Brighter blue gradient
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  padding: "0 40px 0 60px",
+  position: "absolute",
+  top: HEADER_HEIGHT, // place it right below the header
+  left: 0,
+  zIndex: 99,
+  boxShadow: "0 2px 16px rgba(25, 118, 210, 0.12)",
+  minHeight: MASTER_NAV_HEIGHT, // half the header height
+  boxSizing: "border-box",
+  backdropFilter: "blur(6px)",
+  transition: "height 0.2s"
+};
+
+
+
+
+const masterNavBtn = {
+  fontSize: 14,
+  fontWeight: 600,
+  color: "#1976d2",
+  background: "#fff",
+  border: "none",
+  borderRadius: 6,
+  padding: "2px 18px",
+  margin: "0 12px",
+  cursor: "pointer",
+  boxShadow: "0 1px 4px rgba(25,118,210,0.07)",
+  outline: "none",
+};
+
 const logoStyle = {
   fontWeight: 700,
-  fontSize: 19,
+  fontSize: 21,
   color: "#fff",
   letterSpacing: 1,
   fontFamily: "Segoe UI, Arial, sans-serif",
@@ -55,13 +93,13 @@ const navContainer = {
 };
 
 const navBtnStyle = (active) => ({
-  fontSize: 14,
+  fontSize: 15,
   fontWeight: 600,
   color: active ? "#1976d2" : "#fff",
   background: active ? "#fff" : "rgba(25, 118, 210, 0.00)",
   border: "none",
   borderRadius: 7,
-  padding: "5px 18px",
+  padding: "6px 20px",
   marginLeft: 10,
   cursor: active ? "default" : "pointer",
   pointerEvents: active ? "none" : "auto",
@@ -82,30 +120,28 @@ const iconBtnStyle = {
   alignItems: "center",
   borderRadius: 50,
   outline: "none",
-  height: 36,
-  width: 36,
+  height: 40,
+  width: 40,
 };
 
 export default function Header() {
   const location = useLocation();
   const navigate = useNavigate();
+  const [showMasterNav, setShowMasterNav] = useState(false);
 
   const isLogin = location.pathname === "/login";
   const isRegister = location.pathname === "/register";
-
   const showAuthButtons = isLogin || isRegister;
 
-  const handleLogout = () => {
-    navigate("/login");
+  const handleLogout = () => navigate("/login");
+  const handleMaster = () => setShowMasterNav((v) => !v);
+
+  const handleMasterNav = (route) => {
+    setShowMasterNav(false);
+    navigate(route);
   };
 
-  const handleDepartment = () => {
-    navigate("/departments");
-  };
-
-  const handleNotification = () => {
-    alert("You have no new notifications!"); // Replace with your notification logic
-  };
+  const handleNotification = () => alert("You have no new notifications!");
 
   return (
     <>
@@ -113,17 +149,7 @@ export default function Header() {
         @media (max-width: 600px) {
           .custom-header {
             padding: 0 8px 0 8px !important;
-            min-height: 38px !important;
-          }
-          .custom-logo {
-            font-size: 15px !important;
-          }
-          .custom-nav {
-            margin-right: 6px !important;
-          }
-          .custom-nav button {
-            font-size: 12px !important;
-            padding: 4px 10px !important;
+            min-height: 42px !important;
           }
         }
       `}</style>
@@ -153,9 +179,9 @@ export default function Header() {
             <>
               <button
                 style={navBtnStyle(false)}
-                onClick={handleDepartment}
+                onClick={handleMaster}
               >
-                Department
+                Master
               </button>
               <button
                 style={iconBtnStyle}
@@ -174,7 +200,7 @@ export default function Header() {
                   color: "#1976d2",
                   marginRight: 10,
                   marginLeft: 0,
-                  padding: "5px 18px"
+                  padding: "6px 20px"
                 }}
                 onClick={handleLogout}
               >
@@ -184,6 +210,19 @@ export default function Header() {
           )}
         </div>
       </header>
+      {/* Master Nav Bar */}
+      {showMasterNav && (
+        <div style={masterNavStyle}>
+          <button
+            style={masterNavBtn}
+            onClick={() => handleMasterNav("/users")}
+          >User</button>
+          <button
+            style={masterNavBtn}
+            onClick={() => handleMasterNav("/roles")}
+          >Roles</button>
+        </div>
+      )}
     </>
   );
 }

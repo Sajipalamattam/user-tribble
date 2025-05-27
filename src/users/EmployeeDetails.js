@@ -96,8 +96,11 @@ export default function EmployeeDetails({ mode }) {
     }));
   };
 
-  // Check if any field is modified
+  // Check if any field is modified (for update mode)
   const isModified = JSON.stringify(editForm) !== JSON.stringify(originalForm);
+
+  // Enable Add button only if any field is filled (for add mode)
+  const isAnyFieldFilled = isAddMode && Object.values(editForm).some(val => val && val.trim() !== "");
 
   const handleSave = () => {
     if (isAddMode) {
@@ -128,41 +131,8 @@ export default function EmployeeDetails({ mode }) {
       background: '#f6f8fa',
       overflow: 'hidden'
     }}>
-      {/* Responsive styles */}
-      <style>{`
-        @media (max-width: 900px) {
-          .details-card {
-            max-width: 98vw !important;
-            padding: 18px 2vw !important;
-            margin: 80px auto 0 auto !important;
-          }
-          .details-grid {
-            grid-template-columns: 1fr !important;
-            row-gap: 18px !important;
-            column-gap: 0 !important;
-          }
-          .details-title {
-            font-size: 20px !important;
-          }
-          .details-btn {
-            font-size: 13px !important;
-            padding: 7px 10px !important;
-          }
-        }
-        @media (max-width: 600px) {
-          .details-card {
-            max-width: 100vw !important;
-            padding: 8px 0 !important;
-            border-radius: 0 !important;
-            margin: 70px auto 0 auto !important;
-          }
-          .details-title {
-            font-size: 15px !important;
-          }
-        }
-      `}</style>
       <img
-        src="/details-page.jpeg"
+        src={process.env.PUBLIC_URL + 'details-page.jpeg'}//"/details-page.jpeg"  
         alt=""
         style={{
           position: 'fixed',
@@ -179,7 +149,7 @@ export default function EmployeeDetails({ mode }) {
         }}
       />
 
-      <div className="details-card" style={{
+      <div style={{
         maxWidth: 700,
         margin: '90px auto 0 auto',
         padding: 32,
@@ -194,15 +164,15 @@ export default function EmployeeDetails({ mode }) {
             type="button"
             className="details-btn"
             onClick={handleSave}
-            disabled={!isModified && !isAddMode}
+            disabled={isAddMode ? !isAnyFieldFilled : !isModified}
             style={{
               padding: '8px 20px',
               borderRadius: 6,
-              background: isModified || isAddMode ? '#1976d2' : '#e0e0e0',
-              color: isModified || isAddMode ? '#fff' : '#aaa',
+              background: (isAddMode ? isAnyFieldFilled : isModified) ? '#1976d2' : '#e0e0e0',
+              color: (isAddMode ? isAnyFieldFilled : isModified) ? '#fff' : '#aaa',
               border: 'none',
               fontSize: 15,
-              cursor: isModified || isAddMode ? 'pointer' : 'not-allowed'
+              cursor: (isAddMode ? isAnyFieldFilled : isModified) ? 'pointer' : 'not-allowed'
             }}
           >
             {isAddMode ? 'Add' : 'Update'}
