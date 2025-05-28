@@ -6,7 +6,7 @@ const EmployeeContext = createContext();
 export function EmployeeProvider({ children }) {
   const [employees, setEmployees] = useState(employeesData);
 
-  
+  //update
   const updateEmployee = (email, updatedFields) => {
     setEmployees(prev =>
       prev.map(emp =>
@@ -15,7 +15,7 @@ export function EmployeeProvider({ children }) {
     );
   };
 
-  
+  //add
   const addEmployee = (newEmployee) => {
     setEmployees(prev => [...prev, newEmployee]);
   };
@@ -26,7 +26,7 @@ export function EmployeeProvider({ children }) {
     </EmployeeContext.Provider>
   );
 }
-
+//to access employee context to any component
 export function useEmployees() {
   return useContext(EmployeeContext);
 }

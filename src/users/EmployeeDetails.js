@@ -1,21 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useEmployees } from './EmployeeContext';
-
-const HEADER_HEIGHT = 53; // Match your header/list page
-
-const cardStyle = {
-  maxWidth: 1200,
-  width: "100%",
-  margin: `${HEADER_HEIGHT + 40}px auto 0 auto`,
- // Only top margin for header
-  background: '#fff',
-  borderRadius: 18,
-  boxShadow: '0 8px 32px rgba(60,60,100,0.10)',
-  padding: 24,
-  position: 'relative',
-  zIndex: 1
-};
+import {
+  DetailsPageBG,
+  DetailsBgImage,
+  DetailsCard,
+  DetailsBtnRow,
+  DetailsBtn,
+  DetailsTitle,
+  DetailsGrid,
+  DetailsFieldLabel,
+  DetailsInput,
+  DetailsSelect
+} from './styledcomponents';
 
 export default function EmployeeDetails({ mode }) {
   const { employeeEmail } = useParams();
@@ -62,24 +59,16 @@ export default function EmployeeDetails({ mode }) {
 
   if (!isAddMode && !employee) {
     return (
-      <div style={cardStyle}>
-        <h2 style={{ color: '#1976d2', marginBottom: 24 }}>Employee Not Found</h2>
-        <button
+      <DetailsCard>
+        <DetailsTitle>Employee Not Found</DetailsTitle>
+        <DetailsBtn
           type="button"
           onClick={() => navigate('/employees')}
-          style={{
-            padding: '8px 20px',
-            borderRadius: 6,
-            background: '#1976d2',
-            color: '#fff',
-            border: 'none',
-            fontSize: 15,
-            cursor: 'pointer'
-          }}
+          active
         >
           Back to List
-        </button>
-      </div>
+        </DetailsBtn>
+      </DetailsCard>
     );
   }
 
@@ -128,116 +117,61 @@ export default function EmployeeDetails({ mode }) {
   };
 
   return (
-    <div style={{
-      minHeight: '100vh',
-      position: 'relative',
-      background: '#f6f8fa',
-      overflow: 'hidden'
-    }}>
-      <img
+    <DetailsPageBG>
+      <DetailsBgImage
         src={process.env.PUBLIC_URL + 'details-page.jpeg'}
         alt=""
-        style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          width: '100vw',
-          height: '100vh',
-          objectFit: 'cover',
-          opacity: 0.15,
-          filter: 'blur(1px)',
-          zIndex: 0,
-          pointerEvents: 'none',
-          userSelect: 'none'
-        }}
       />
 
-      <div style={cardStyle}>
-        <div style={{ display: 'flex', gap: 16, marginBottom: 24, flexWrap: 'wrap',justifyContent:'flex-end' }}>
-          <button
+      <DetailsCard>
+        <DetailsBtnRow>
+          <DetailsBtn
             type="button"
-            className="details-btn"
             onClick={handleSave}
             disabled={isAddMode ? !isAnyFieldFilled : !isModified}
-            style={{
-              padding: '8px 20px',
-              borderRadius: 6,
-              background: (isAddMode ? isAnyFieldFilled : isModified) ? '#1976d2' : '#e0e0e0',
-              color: (isAddMode ? isAnyFieldFilled : isModified) ? '#fff' : '#aaa',
-              border: 'none',
-              fontSize: 15,
-              cursor: (isAddMode ? isAnyFieldFilled : isModified) ? 'pointer' : 'not-allowed'
-            }}
+            active={isAddMode ? isAnyFieldFilled : isModified}
           >
             {isAddMode ? 'Add' : 'Update'}
-          </button>
-          <button
+          </DetailsBtn>
+          <DetailsBtn
             type="button"
-            className="details-btn"
+            cancel
             onClick={handleCancel}
-            style={{
-              padding: '8px 20px',
-              borderRadius: 6,
-              background: '#e53935',
-              color: '#fff',
-              border: 'none',
-              fontSize: 15,
-              cursor: 'pointer'
-            }}
           >
             Cancel
-          </button>
-        </div>
+          </DetailsBtn>
+        </DetailsBtnRow>
 
-        <h2 className="details-title" style={{ color: '#1976d2', marginBottom: 24 }}>
+        <DetailsTitle>
           {isAddMode ? 'Add New Employee' : 'Employee Details'}
-        </h2>
-        <div className="details-grid" style={{
-          display: 'grid',
-          gridTemplateColumns: '1fr 1fr',
-          rowGap: 20,
-          columnGap: 40
-        }}>
+        </DetailsTitle>
+        <DetailsGrid>
           {fields.map((field, idx) => (
             <div key={idx}>
-              <div style={{ fontWeight: 500, color: '#888' }}>{field.label}</div>
+              <DetailsFieldLabel>{field.label}</DetailsFieldLabel>
               {field.key === 'Employee position' ? (
-                <select
+                <DetailsSelect
                   value={editForm[field.key] || ''}
                   onChange={e => handleChange(field.key, e.target.value)}
-                  style={{
-                    fontSize: 17,
-                    padding: 6,
-                    borderRadius: 4,
-                    border: '1px solid #aaa',
-                    width: '95%'
-                  }}
                   disabled={field.key === 'Email'}
                 >
                   <option value="">Select Position</option>
                   {uniquePositions.map(pos => (
                     <option key={pos} value={pos}>{pos}</option>
                   ))}
-                </select>
+                </DetailsSelect>
               ) : (
-                <input
+                <DetailsInput
                   type="text"
                   value={editForm[field.key] || ''}
                   onChange={e => handleChange(field.key, e.target.value)}
-                  style={{
-                    fontSize: 17,
-                    padding: 6,
-                    borderRadius: 4,
-                    border: '1px solid #aaa',
-                    width: '90%'
-                  }}
                   disabled={!isAddMode && field.key === 'Email'}
                 />
               )}
             </div>
           ))}
-        </div>
-      </div>
-    </div>
+        </DetailsGrid>
+      </DetailsCard>
+    </DetailsPageBG>
   );
 }
