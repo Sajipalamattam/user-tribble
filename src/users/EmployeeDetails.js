@@ -2,6 +2,21 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useEmployees } from './EmployeeContext';
 
+const HEADER_HEIGHT = 53; // Match your header/list page
+
+const cardStyle = {
+  maxWidth: 1200,
+  width: "100%",
+  margin: `${HEADER_HEIGHT + 40}px auto 0 auto`,
+ // Only top margin for header
+  background: '#fff',
+  borderRadius: 18,
+  boxShadow: '0 8px 32px rgba(60,60,100,0.10)',
+  padding: 24,
+  position: 'relative',
+  zIndex: 1
+};
+
 export default function EmployeeDetails({ mode }) {
   const { employeeEmail } = useParams();
   const navigate = useNavigate();
@@ -47,16 +62,7 @@ export default function EmployeeDetails({ mode }) {
 
   if (!isAddMode && !employee) {
     return (
-      <div style={{
-        maxWidth: 700,
-        margin: '90px auto 0 auto',
-        padding: 32,
-        background: '#fff',
-        borderRadius: 12,
-        boxShadow: '0 4px 24px rgba(0,0,0,0.08)',
-        position: 'relative',
-        zIndex: 1
-      }}>
+      <div style={cardStyle}>
         <h2 style={{ color: '#1976d2', marginBottom: 24 }}>Employee Not Found</h2>
         <button
           type="button"
@@ -96,10 +102,7 @@ export default function EmployeeDetails({ mode }) {
     }));
   };
 
-  // Check if any field is modified (for update mode)
   const isModified = JSON.stringify(editForm) !== JSON.stringify(originalForm);
-
-  // Enable Add button only if any field is filled (for add mode)
   const isAnyFieldFilled = isAddMode && Object.values(editForm).some(val => val && val.trim() !== "");
 
   const handleSave = () => {
@@ -132,7 +135,7 @@ export default function EmployeeDetails({ mode }) {
       overflow: 'hidden'
     }}>
       <img
-        src={process.env.PUBLIC_URL + 'details-page.jpeg'}//"/details-page.jpeg"  
+        src={process.env.PUBLIC_URL + 'details-page.jpeg'}
         alt=""
         style={{
           position: 'fixed',
@@ -149,17 +152,8 @@ export default function EmployeeDetails({ mode }) {
         }}
       />
 
-      <div style={{
-        maxWidth: 700,
-        margin: '90px auto 0 auto',
-        padding: 32,
-        background: '#fff',
-        borderRadius: 12,
-        boxShadow: '0 4px 24px rgba(0,0,0,0.08)',
-        position: 'relative',
-        zIndex: 1
-      }}>
-        <div style={{ display: 'flex', gap: 16, marginBottom: 24, flexWrap: 'wrap' }}>
+      <div style={cardStyle}>
+        <div style={{ display: 'flex', gap: 16, marginBottom: 24, flexWrap: 'wrap',justifyContent:'flex-end' }}>
           <button
             type="button"
             className="details-btn"
