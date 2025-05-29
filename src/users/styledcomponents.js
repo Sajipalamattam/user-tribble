@@ -9,16 +9,21 @@ export const HeaderNavWrapper = styled.div`
   left: 0;
   width: 100vw;
   z-index: 200;
-  pointer-events: none; /* disables pointer events for the wrapper itself */
+  pointer-events: none;
 `;
 
 export const PointerEventsBox = styled.div`
-  pointer-events: auto; /* re-enables pointer events for children */
+  pointer-events: auto;
 `;
 
 export const StyledHeader = styled.header`
   width: 100vw;
-  background: linear-gradient(90deg, #1976d2 60%, #64b5f6 100%);
+  background: ${({ theme }) =>
+    theme.name === "Dark"
+      ? "#121212"
+      : (theme.colors.primary
+          ? `linear-gradient(90deg, ${theme.colors.primary} 60%, ${theme.colors.button} 100%)`
+          : 'linear-gradient(90deg, #1976d2 60%, #64b5f6 100%)')};
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -28,7 +33,10 @@ export const StyledHeader = styled.header`
   left: 0;
   right: 0;
   z-index: 100;
-  box-shadow: 0 2px 16px rgba(25, 118, 210, 0.12);
+  box-shadow: ${({ theme }) =>
+    theme.name === "Dark"
+      ? "0 2px 16px rgba(0,0,0,0.7)"
+      : "0 2px 16px rgba(25, 118, 210, 0.12)"};
   min-height: ${HEADER_HEIGHT}px;
   backdrop-filter: blur(6px);
   box-sizing: border-box;
@@ -43,11 +51,17 @@ export const StyledHeader = styled.header`
   }
 `;
 
+
 export const StyledNavBar = styled.div`
   width: 100vw;
   max-width: 100vw;
   height: ${MASTER_NAV_HEIGHT}px;
-  background: linear-gradient(90deg, #90caf9 60%, #bbdefb 100%);
+  background: ${({ theme }) =>
+    theme.name === "Forest"
+      ? "#d8f3dc"
+      : theme.name === "Ocean"
+        ? "#90caf9"
+        : "linear-gradient(90deg, #54a0e5 60%, #90caf9 100%)"};
   position: fixed;
   top: ${HEADER_HEIGHT}px;
   left: 0;
@@ -66,6 +80,10 @@ export const StyledNavBar = styled.div`
   pointer-events: ${({ show }) => (show ? 'auto' : 'none')};
 `;
 
+
+
+
+
 export const MasterBtnContainer = styled.div`
   position: relative;
   display: flex;
@@ -75,8 +93,14 @@ export const MasterBtnContainer = styled.div`
 export const MasterBtn = styled.button`
   font-size: 13px;
   font-weight: 600;
-  color: #1976d2;
-  background: #fff;
+  color: ${({ theme }) =>
+    theme.name === 'Ocean' || theme.name === 'Forest' ? '#fff' : theme.colors.primary};
+  background: ${({ theme }) =>
+    theme.name === 'Ocean'
+      ? '#00A896'
+      : theme.name === 'Forest'
+        ? '#014421' // dark green
+        : theme.colors.card};
   border: none;
   border-radius: 7px;
   padding: 5px 12px;
@@ -97,24 +121,13 @@ export const MasterBtn = styled.button`
   }
 `;
 
-export const DropdownMenu = styled.div`
-  display: ${({ show }) => (show ? 'flex' : 'none')};
-  flex-direction: column;
-  position: absolute;
-  top: 100%;
-  left: 0;
-  min-width: 120px;
-  background: #fff;
-  box-shadow: 0 2px 8px rgba(25, 118, 210, 0.13);
-  border-radius: 7px;
-  padding: 7px 0;
-  z-index: 102;
-`;
+
 
 export const DropdownBtn = styled.button`
   font-size: 15px;
   font-weight: 500;
-  color: #1976d2;
+  color: ${({ theme }) =>
+    theme.name === 'Ocean' || theme.name === 'Forest' ? '#fff' : theme.colors.primary};
   background: none;
   border: none;
   text-align: left;
@@ -125,14 +138,39 @@ export const DropdownBtn = styled.button`
   transition: background 0.2s;
 `;
 
+
+
+export const DropdownMenu = styled.div`
+  display: ${({ show }) => (show ? 'flex' : 'none')};
+  flex-direction: column;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  min-width: 120px;
+  background: ${({ theme }) =>
+    theme.name === 'Forest'
+      ? '#014421' // dark green for Forest theme
+      : theme.colors.card};
+  box-shadow: 0 2px 8px rgba(25, 118, 210, 0.13);
+  border-radius: 7px;
+  padding: 7px 0;
+  z-index: 102;
+`;
+
+
+
+
 export const Logo = styled.div`
   font-weight: 700;
   font-size: 21px;
-  color: #fff;
+  color: ${({ theme }) =>
+    theme.name === "Light" || theme.name === "Dark" || theme.name === "Ocean" || theme.name === "Forest"
+      ? "#fff"
+      : (theme.colors.primary || "#1976d2")};
   letter-spacing: 1px;
   font-family: "Segoe UI", Arial, sans-serif;
   user-select: none;
-  text-shadow: 0 2px 8px rgba(25,118,210,0.12);
+  text-shadow: 0 1px 4px rgba(0,0,0,0.10);
 
   @media (max-width: 900px) {
     font-size: 16px !important;
@@ -141,6 +179,10 @@ export const Logo = styled.div`
     font-size: 13px !important;
   }
 `;
+
+
+
+
 
 export const NavContainer = styled.div`
   display: flex;
@@ -159,22 +201,43 @@ export const NavContainer = styled.div`
 export const NavBtn = styled.button`
   font-size: 15px;
   font-weight: 600;
-  color: ${({ active }) => (active ? "#1976d2" : "#fff")};
-  background: ${({ active }) => (active ? "#fff" : "rgba(25, 118, 210, 0.00)")};
-  border: none;
+  color: ${({ active, theme }) =>
+    active
+      ? "#fff" // Active: white text
+      : theme.colors.primary || "#90caf9"}; // Inactive: blue text
+  background: ${({ active }) =>
+    active
+      ? "#181818" // Active: black background (or use "#000" if you want pure black)
+      : "#fff"}; // Inactive: white background
+  border: 2px solid ${({ theme }) => theme.colors.primary || "#90caf9"};
   border-radius: 7px;
   padding: 6px 20px;
   margin-left: 10px;
   cursor: ${({ active }) => (active ? "default" : "pointer")};
   pointer-events: ${({ active }) => (active ? "none" : "auto")};
-  box-shadow: ${({ active }) => (active ? "0 2px 8px rgba(25,118,210,0.07)" : "none")};
-  transition: background 0.2s, color 0.2s;
+  box-shadow: none;
+  transition: background 0.2s, color 0.2s, border 0.2s;
   outline: none;
   font-family: inherit;
+
+  &:hover {
+    background: ${({ active, theme }) =>
+      active
+        ? "#181818"
+        : theme.colors.primary || "#90caf9"};
+    color: #fff;
+    border-color: ${({ theme }) => theme.colors.primary || "#90caf9"};
+  }
 `;
 
+
+
+
+
+
 export const IconBtn = styled.button`
-  background: none;
+  background: #fff;
+  color: ${({ theme }) => theme.colors.primary || "#1976d2"};
   border: none;
   margin-left: 12px;
   margin-right: 0;
@@ -182,17 +245,33 @@ export const IconBtn = styled.button`
   cursor: pointer;
   display: flex;
   align-items: center;
-  border-radius: 50px;
+  justify-content: center;
+  border-radius: 50%;
   outline: none;
-  height: 40px;
-  width: 40px;
+  height: 28px;
+  width: 28px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+
+  &:hover {
+    background: ${({ theme }) => theme.colors.primary || "#1976d2"};
+    color: #fff;
+  }
+
+  svg {
+    display: block;
+    margin: auto;
+    width: 22px;
+    height: 22px;
+  }
 `;
+
+
 export const ProfileDropdown = styled.div`
   position: fixed;
   top: ${HEADER_HEIGHT + 10}px;
   right: 30px;
   min-width: 220px;
-  background: #fff;
+  background: ${({ theme }) => theme.colors.card};
   border-radius: 12px;
   box-shadow: 0 4px 24px rgba(0,0,0,0.12);
   z-index: 200;
@@ -207,13 +286,13 @@ export const ProfileImage = styled.img`
   height: 64px;
   border-radius: 50%;
   margin-bottom: 10px;
-  border: 2px solid #1976d2;
+  border: 2px solid ${({ theme }) => theme.colors.primary};
 `;
 
 export const ProfileDropdownBtn = styled.button`
   background: none;
   border: none;
-  color: ${({ danger }) => (danger ? "#e53935" : "#1976d2")};
+  color: ${({ danger, theme }) => (danger ? "#e53935" : theme.colors.primary)};
   font-weight: 500;
   font-size: 16px;
   padding: 7px 0;
@@ -228,11 +307,9 @@ export const ProfileDropdownHr = styled.hr`
   border-color: #eee;
 `;
 
-// styledcomponent.js (add these at the end or in a new section)
-
 export const PageBG = styled.div`
   min-height: 100vh;
-  background: #f6f8fa;
+  background: ${({ theme }) => theme.colors.background};
   padding: 0;
   position: relative;
   overflow: hidden;
@@ -241,8 +318,8 @@ export const PageBG = styled.div`
 export const Card = styled.div`
   max-width: 1200px;
   width: 100%;
-  margin: ${HEADER_HEIGHT + 40}px auto 0 auto;
-  background: #fff;
+  margin: ${({ marginTop }) => marginTop || `${HEADER_HEIGHT + 40}px`} auto 0 auto;
+  background: ${({ theme }) => theme.colors.card};
   border-radius: 18px;
   box-shadow: 0 8px 32px rgba(60,60,100,0.10);
   padding: 24px;
@@ -271,7 +348,7 @@ export const CardHeader = styled.div`
 export const CardTitle = styled.div`
   font-size: 32px;
   font-weight: 700;
-  color: #1976d2;
+  color: ${({ theme }) => theme.colors.primary};
   letter-spacing: 1px;
 
   @media (max-width: 900px) {
@@ -313,7 +390,10 @@ export const AddButton = styled.button`
   padding: 12px 24px;
   font-size: 17px;
   border-radius: 8px;
-  background: #1976d2;
+  background: ${({ theme }) =>
+    theme.name === "Dark"
+      ? "rgba(255,255,255,0.07)"
+      : theme.colors.button};
   color: #fff;
   border: none;
   font-weight: 600;
@@ -322,8 +402,12 @@ export const AddButton = styled.button`
   transition: background 0.2s;
 
   &:hover {
-    background: #1251a6;
+    background: ${({ theme }) =>
+      theme.name === "Dark"
+        ? "rgba(255,255,255,0.17)"
+        : "#1251a6"};
   }
+
   @media (max-width: 900px) {
     font-size: 15px;
     padding: 10px 16px;
@@ -334,6 +418,7 @@ export const AddButton = styled.button`
   }
 `;
 
+
 export const Pagination = styled.div`
   margin-top: 16px;
   display: flex;
@@ -343,14 +428,48 @@ export const Pagination = styled.div`
 `;
 
 export const PageButton = styled.button`
-  padding: 8px 18px;
-  border-radius: 6px;
-  background: ${({ disabled }) => (disabled ? '#e0e0e0' : '#1976d2')};
-  color: ${({ disabled }) => (disabled ? '#aaa' : '#fff')};
+  padding: 8px 24px;
+  border-radius: 8px;
+  background: ${({ disabled, theme }) =>
+    disabled
+      ? "#e0e0e0"
+      : theme.name === "Dark"
+        ? "#222"
+        : theme.colors.button || "#1976d2"};
+  color: ${({ disabled, theme }) =>
+    disabled
+      ? "#aaa"
+      : "#fff"};
   border: none;
-  font-weight: 500;
-  cursor: ${({ disabled }) => (disabled ? 'default' : 'pointer')};
+  font-size: 16px;
+  font-weight: 600;
+  cursor: ${({ disabled }) => (disabled ? "not-allowed" : "pointer")};
+  box-shadow: ${({ disabled }) =>
+    disabled ? "none" : "0 4px 12px rgba(25, 118, 210, 0.18)"};
+  opacity: ${({ disabled }) => (disabled ? 0.7 : 1)};
+  transition: background 0.3s, transform 0.2s;
+  margin: 0 4px;
+
+  &:hover {
+    background: ${({ disabled, theme }) =>
+      disabled
+        ? "#e0e0e0"
+        : theme.name === "Dark"
+          ? "#444"
+          : "#1251a6"};
+    transform: ${({ disabled }) => (disabled ? "none" : "scale(1.04)")};
+  }
 `;
+
+export const PageNumber = styled.span`
+  color: ${({ theme }) => theme.name === "Dark" ? "#fff" : "#222"};
+  font-weight: 700;
+  font-size: 18px;
+  user-select: none;
+  margin: 0 8px;
+`;
+
+
 
 export const BgImage = styled.img`
   position: fixed;
@@ -365,7 +484,6 @@ export const BgImage = styled.img`
   pointer-events: none;
   user-select: none;
 `;
-
 
 export const LoginContainer = styled.div`
   min-height: 100vh;
@@ -449,7 +567,7 @@ export const RightSide = styled.div`
 `;
 
 export const LoginCard = styled.form`
-  background: #fff;
+  background: ${({ theme }) => theme.colors.card};
   border-radius: 18px;
   box-shadow: 0 8px 32px rgba(60,60,100,0.10);
   padding: 48px 56px;
@@ -469,7 +587,7 @@ export const LoginCard = styled.form`
 export const LoginTitle = styled.div`
   font-size: 28px;
   font-weight: 700;
-  color: #1976d2;
+  color: ${({ theme }) => theme.colors.primary};
   margin-bottom: 24px;
   letter-spacing: 1px;
 `;
@@ -492,7 +610,10 @@ export const LoginButton = styled.button`
   padding: 12px 0;
   font-size: 18px;
   border-radius: 8px;
-  background: #1976d2;
+  background: ${({ theme }) =>
+    theme.name === "Dark"
+      ? "rgba(255,255,255,0.07)"
+      : theme.colors.button};
   color: #fff;
   border: none;
   font-weight: 600;
@@ -501,9 +622,14 @@ export const LoginButton = styled.button`
   transition: background 0.2s;
 
   &:hover {
-    background: #1251a6;
+    background: ${({ theme }) =>
+      theme.name === "Dark"
+        ? "rgba(255,255,255,0.17)"
+        : "#1251a6"};
   }
 `;
+
+
 
 export const RegisterContainer = styled.div`
   min-height: 100vh;
@@ -538,7 +664,7 @@ export const RegisterRight = styled.div`
 `;
 
 export const RegisterCard = styled.form`
-  background: #fff;
+  background: ${({ theme }) => theme.colors.card};
   border-radius: 18px;
   box-shadow: 0 8px 32px rgba(60,60,100,0.10);
   padding: 40px 36px;
@@ -552,7 +678,7 @@ export const RegisterCard = styled.form`
 export const RegisterTitle = styled.div`
   font-size: 28px;
   font-weight: 700;
-  color: #1976d2;
+  color: ${({ theme }) => theme.colors.primary};
   margin-bottom: 24px;
   letter-spacing: 1px;
 `;
@@ -574,7 +700,10 @@ export const RegisterButton = styled.button`
   padding: 12px 0;
   font-size: 18px;
   border-radius: 8px;
-  background: #1976d2;
+  background: ${({ theme }) =>
+    theme.name === "Dark"
+      ? "rgba(255,255,255,0.07)"
+      : theme.colors.button};
   color: #fff;
   border: none;
   font-weight: 600;
@@ -583,9 +712,13 @@ export const RegisterButton = styled.button`
   transition: background 0.2s;
 
   &:hover {
-    background: #1251a6;
+    background: ${({ theme }) =>
+      theme.name === "Dark"
+        ? "rgba(255,255,255,0.17)"
+        : "#1251a6"};
   }
 `;
+
 
 export const RegisterIllustration = styled.img`
   width: 75%;
@@ -597,7 +730,7 @@ export const RegisterIllustration = styled.img`
 export const DetailsPageBG = styled.div`
   min-height: 100vh;
   position: relative;
-  background: #f6f8fa;
+  background: ${({ theme }) => theme.colors.background};
   overflow: hidden;
 `;
 
@@ -619,7 +752,7 @@ export const DetailsCard = styled.div`
   max-width: 1200px;
   width: 100%;
   margin: ${({ marginTop }) => marginTop || '93px auto 0 auto'};
-  background: #fff;
+  background: ${({ theme }) => theme.colors.card};
   border-radius: 18px;
   box-shadow: 0 8px 32px rgba(60,60,100,0.10);
   padding: 24px;
@@ -638,17 +771,17 @@ export const DetailsBtnRow = styled.div`
 export const DetailsBtn = styled.button`
   padding: 8px 20px;
   border-radius: 6px;
-  background: ${({ cancel, active }) =>
-    cancel ? '#e53935' : active ? '#1976d2' : '#e0e0e0'};
-  color: ${({ cancel, active }) =>
-    cancel ? '#fff' : active ? '#fff' : '#aaa'};
+  background: ${({ cancel, active, theme }) =>
+    cancel ? '#e53935' : active ? theme.colors.button : '#e0e0e0'};
+  color: ${({ cancel, active, theme }) =>
+    cancel ? '#fff' : active ? theme.colors.buttonText : '#aaa'};
   border: none;
   font-size: 15px;
   cursor: ${({ active }) => (active ? 'pointer' : 'not-allowed')};
 `;
 
 export const DetailsTitle = styled.h2`
-  color: #1976d2;
+  color: ${({ theme }) => theme.colors.primary};
   margin-bottom: 24px;
 `;
 
