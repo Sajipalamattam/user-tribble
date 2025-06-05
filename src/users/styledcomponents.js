@@ -812,3 +812,82 @@ export const DetailsSelect = styled.select`
   border: 1px solid #aaa;
   width: 95%;
 `;
+
+export const DetailLabel = styled.span`
+  color: #00008B;   /* Dark blue */
+  font-weight: 600; /* Optional: makes it bold */
+`;
+
+export const HeaderContainer = styled.header`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background: #333;
+  color: white;
+`;
+
+
+
+export const DataGridWrapper = styled.div`
+  background: ${({ theme }) => theme.colors.card || "#fff"};
+  border-radius: 12px;
+  padding: 0;
+  /* Optional: Add shadow or border for consistency */
+  box-shadow: 0 2px 8px rgba(60,60,100,0.07);
+  /* Ensure DataGrid fills the wrapper */
+  .rdg {
+    background: transparent !important;
+  }
+`;
+
+
+export const RoleClickable = styled.span`
+  color: #1976d2;
+  cursor: pointer;
+  font-weight: 600;
+`;
+
+export const DeleteButton = styled.button`
+  background: #e53935;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 14px;
+  cursor: pointer;
+`;
+
+export const SaveButton = styled.button`
+  background: #1976d2;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 14px;
+  cursor: pointer;
+  margin-right: 8px;
+`;
+
+export const CancelButton = styled.button`
+  background: #e53935;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 14px;
+  cursor: pointer;
+`;
+
+export const RoleEditBox = styled.div`
+  margin-top: 20px;
+  padding: 20px;
+  border: 1px solid #1976d2;
+  border-radius: 8px;
+  background: #f7fafd;
+`;
+
+export const EditInput = styled.input`
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  margin-bottom: 8px;
+`;
+

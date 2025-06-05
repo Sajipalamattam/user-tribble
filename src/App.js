@@ -5,11 +5,14 @@ import Register from "./users/Register";
 import EmployeeList from "./users";
 import EmployeeDetails from "./users/EmployeeDetails";
 import { EmployeeProvider } from "./users/EmployeeContext";
-import { ThemeProvider, useTheme } from "./users/ThemeContext"; // <-- import both
-import { ThemeProvider as StyledThemeProvider } from "styled-components"; // <-- styled-components provider
+import { ThemeProvider, useTheme } from "./users/ThemeContext";
+import { ThemeProvider as StyledThemeProvider } from "styled-components";
+import ProtectedRoute from "./ProtectedRoute";
 import './App.css';
+import Roles from "./users/Roles";
+import RoleDetails from "./users/Roledetails";
+import { AuthProvider } from "./users/AuthContext"; // <-- Import AuthProvider
 
-// A wrapper component to access the theme from context and provide it to styled-components
 function AppWithStyledTheme() {
   const { theme } = useTheme();
   return (
@@ -21,9 +24,15 @@ function AppWithStyledTheme() {
               <Route path="/" element={<Navigate to="/login" replace />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
-              <Route path="/employees" element={<EmployeeList />} />
-              <Route path="/employees/new" element={<EmployeeDetails mode="add" />} />
-              <Route path="/employees/:employeeEmail" element={<EmployeeDetails />} />
+              <Route path="/roles" element={<Roles />} />
+              <Route path="/roles/:roleId" element={<RoleDetails />} />
+              
+              {/* Protected routes */}
+              <Route element={<ProtectedRoute />}>
+                <Route path="/employees" element={<EmployeeList />} />
+                <Route path="/employees/new" element={<EmployeeDetails mode="add" />} />
+                <Route path="/employees/:employeeEmail" element={<EmployeeDetails />} />
+              </Route>
             </Routes>
           </Layout>
         </Router>
@@ -35,7 +44,9 @@ function AppWithStyledTheme() {
 function App() {
   return (
     <ThemeProvider>
-      <AppWithStyledTheme />
+      <AuthProvider>
+        <AppWithStyledTheme />
+      </AuthProvider>
     </ThemeProvider>
   );
 }

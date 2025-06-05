@@ -1,4 +1,4 @@
-// themes.js
+
 export const themes = {
   light: {
     name: "Light",

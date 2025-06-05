@@ -19,7 +19,8 @@ export default function Register() {
   const [success, setSuccess] = useState('');
   const [error, setError] = useState('');
 
-  const handleSubmit = (e) => {
+  
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setSuccess('');
@@ -37,14 +38,27 @@ export default function Register() {
       return;
     }
 
-    setSuccess('Registration successful!');
-    setUsername('');
-    setEmail('');
-    setPassword('');
+    // Send registration data to the backend
+    try {
+      const response = await fetch('http://localhost:8080/api/auth/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, email, password })
+      });
+      const data = await response.json();
 
-    setTimeout(() => {
-      setSuccess('');
-    }, 1000);
+      if (response.ok) {
+        setSuccess('Registration successful! Please login.');
+        setUsername('');
+        setEmail('');
+        setPassword('');
+        setTimeout(() => setSuccess(''), 2000);
+      } else {
+        setError(data.message || 'Registration failed.');
+      }
+    } catch (err) {
+      setError('Network error. Please try again.');
+    }
   };
 
   return (

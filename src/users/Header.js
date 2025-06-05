@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation,Link } from "react-router-dom";
+import { useAuth } from "../users/AuthContext";
 import {
   HEADER_HEIGHT,
   MASTER_NAV_HEIGHT,
@@ -18,7 +19,10 @@ import {
   ProfileDropdownBtn,
   HeaderNavWrapper,
   PointerEventsBox,
-  ProfileDropdownHr
+  ProfileDropdownHr,
+  HeaderContainer,
+  LoginButton,
+  RolesButton
 } from "./styledcomponents";
 import { useTheme } from "./ThemeContext";
 
@@ -146,6 +150,9 @@ export default function Header() {
   const masterBtnRef = useRef(null);
   const profileBtnRef = useRef(null);
 
+  // Use Auth Context!
+  const { user, logout, isLoggedIn } = useAuth();
+
   const { theme } = useTheme();
 
   // ICON COLOR LOGIC
@@ -153,12 +160,8 @@ export default function Header() {
   if (theme.name === "Dark") iconColor = "#000";
   if (theme.name === "Forest") iconColor = "#014421";
 
-  const isLogin = location.pathname === "/login";
-  const isRegister = location.pathname === "/register";
-  const showAuthButtons = isLogin || isRegister;
-
   useEffect(() => {
-    if (!showAuthButtons) {
+    if (isLoggedIn) {
       setShowNavBar(true);
       setNavBarLocked(true);
       const timer = setTimeout(() => {
@@ -167,7 +170,7 @@ export default function Header() {
       }, 2000);
       return () => clearTimeout(timer);
     }
-  }, [showAuthButtons]);
+  }, [isLoggedIn]);
 
   const handleNavBarMouseLeave = () => {
     if (!navBarLocked) {
@@ -193,18 +196,22 @@ export default function Header() {
     };
   }, [showProfileDropdown]);
 
-  const handleLogout = () => navigate("/login");
+  // Use context logout!
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
+  };
   const handleNotification = () => alert("You have no new notifications!");
 
   return (
     <HeaderNavWrapper
       onMouseEnter={
-        !showAuthButtons && !navBarLocked
+        isLoggedIn && !navBarLocked
           ? () => setShowNavBar(true)
           : undefined
       }
       onMouseLeave={
-        !showAuthButtons && !navBarLocked
+        isLoggedIn && !navBarLocked
           ? handleNavBarMouseLeave
           : undefined
       }
@@ -213,25 +220,7 @@ export default function Header() {
         <StyledHeader>
           <Logo>MyCompany</Logo>
           <NavContainer>
-            {showAuthButtons ? (
-              <>
-                <NavBtn
-                  active={isLogin}
-                  disabled={isLogin}
-                  onClick={() => navigate("/login")}
-                >
-                  Login
-                </NavBtn>
-                <NavBtn
-                  active={isRegister}
-                  disabled={isRegister}
-                  onClick={() => navigate("/register")}
-                >
-                  Register
-                </NavBtn>
-                <ThemeDropdown />
-              </>
-            ) : (
+            {isLoggedIn ? (
               <>
                 <IconBtn
                   title="Notifications"
@@ -294,11 +283,32 @@ export default function Header() {
                 </NavBtn>
                 <ThemeDropdown />
               </>
+            ) : (
+              <>
+                <NavBtn onClick={() => navigate("/roles")}>
+                  Roles
+                </NavBtn>
+                <NavBtn
+                  active={location.pathname === "/login"}
+                  disabled={location.pathname === "/login"}
+                  onClick={() => navigate("/login")}
+                >
+                  Login
+                </NavBtn>
+                <NavBtn
+                  active={location.pathname === "/register"}
+                  disabled={location.pathname === "/register"}
+                  onClick={() => navigate("/register")}
+                >
+                  Register
+                </NavBtn>
+                <ThemeDropdown />
+              </>
             )}
           </NavContainer>
         </StyledHeader>
         {/* Nav Bar: visible for 2s after login, then only on header hover */}
-        {!showAuthButtons && (
+        {isLoggedIn && (
           <StyledNavBar show={showNavBar}>
             <MasterBtnContainer
               onMouseEnter={() => setShowMasterDropdown(true)}
